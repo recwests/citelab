@@ -52,23 +52,23 @@
     "providerSlug": "vast",
     "gpu": "RTX 4090",
     "gpuSlug": "rtx-4090",
-    "pricePerHourUsd": 0.3,
+    "pricePerHourUsd": 0.31,
     "billing": "on-demand",
     "region": null,
     "affiliateUrl": "https://vast.ai/",
     "sourceUrl": "https://vast.ai/",
-    "updatedAt": "2026-06-26"
+    "updatedAt": "2026-06-27"
   },
   {
     "provider": "Vast.ai",
     "providerSlug": "vast",
     "gpu": "H100 80GB",
     "gpuSlug": "h100-80gb",
-    "pricePerHourUsd": 1.92,
+    "pricePerHourUsd": 1.67,
     "billing": "on-demand",
     "region": null,
     "affiliateUrl": "https://vast.ai/",
     "sourceUrl": "https://vast.ai/",
-    "updatedAt": "2026-06-26"
+    "updatedAt": "2026-06-27"
   }
 ]
