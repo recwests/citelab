@@ -27,8 +27,8 @@
     },
     "query_method": {
       "type": "string",
-      "enum": ["api", "manual"],
-      "description": "How the answer was obtained. 'api' = official API (gemini grounding, perplexity sonar); 'manual' = observed by hand in the UI. The same platform can give different results via different methods, so this must be recorded explicitly."
+      "enum": ["api", "manual", "reverse"],
+      "description": "How the answer was obtained. 'api' = official API (gemini grounding, perplexity sonar); 'reverse' = anonymous reverse-engineered endpoint (chatgpt backend-anon via s5treak/reverse-chatgpt, search force-triggered); 'manual' = observed by hand in the UI. The same platform can give different results via different methods, so this must be recorded explicitly."
     },
     "model": {
       "type": ["string", "null"],

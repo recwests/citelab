@@ -5,9 +5,10 @@ Perplexity, Google AI Overviews, Gemini, Bing/Copilot) **cite this site** for
 the questions our content targets.
 
 This directory holds the **measurement data + schema + docs**, plus the
-**Gemini grounding runner** (`runner.py`) — the first auto channel. It lives
-outside `src/`, has no `.ts`/`.astro` files, and is **not part of the Astro
-build**.
+**measurement runner** (`runner.py`) — two auto channels selected with
+`--channel`: `gemini` (Gemini grounding API, default) and `chatgpt` (anonymous
+ChatGPT, search-forced). It lives outside `src/`, has no `.ts`/`.astro` files,
+and is **not part of the Astro build**.
 
 ## Running the runner (Gemini grounding channel)
 
@@ -47,6 +48,52 @@ from memory without searching; when a call succeeds but issues no
 `web_search_queries` and returns no chunks, the record's `notes` is set to
 `no_search` (so `cited:false` from "didn't search" is distinguishable from
 "searched but didn't cite us").
+
+## Running the runner (anonymous ChatGPT channel, search-forced)
+
+The `chatgpt` channel queries **anonymous ChatGPT** (`chatgpt.com/backend-anon`)
+through the [`s5treak/reverse-chatgpt`](https://github.com/s5treak/reverse-chatgpt)
+library. **No account, no API key** — the library bootstraps an anonymous
+session and solves ChatGPT's proof-of-work challenge itself.
+
+```bash
+# one-time install (no key needed):
+git clone https://github.com/s5treak/reverse-chatgpt ~/.local/citelab-libs/reverse-chatgpt
+pip install --target=~/.local/citelab-libs --break-system-packages curl_cffi beautifulsoup4 lxml
+
+PYTHONPATH=~/.local/citelab-libs python3 experiments/runner.py --channel chatgpt --limit 2  # smoke
+PYTHONPATH=~/.local/citelab-libs python3 experiments/runner.py --channel chatgpt            # full panel
+```
+
+Config via env: `N`, `TARGET_DOMAIN` (shared with the gemini channel),
+`CHATGPT_SEARCH_SUFFIX` (default `"Cite your sources."`), `CHATGPT_LIB_DIR`
+(default `~/.local/citelab-libs/reverse-chatgpt`), `CHATGPT_TIME_BUDGET`
+(seconds before the channel stops launching new prompts, default 900).
+
+**Run LOCALLY.** The anonymous backend is IP-sensitive — datacenter/cloud IPs
+get Cloudflare-blocked. From a residential connection it works without an
+account. The channel uses up to 2 retries with growing backoff (3s, 6s) per
+prompt, a fresh session per call (each anon conversation needs its own
+single-use proof-of-work token), and a polite ~4.5s gap between prompts. On
+total failure a record is still written with the error in `notes` and
+`cited:false`.
+
+**Forced-search semantics.** Anonymous ChatGPT does **not** browse unless
+nudged, so this channel appends `CHATGPT_SEARCH_SUFFIX` to every prompt to
+**force a web search**, and labels every record honestly: `notes` contains
+`search_forced`. This measures *"when ChatGPT searches this query, is our domain
+cited"* — analogous to enabling Gemini's grounding tool, **not** a measure of
+ChatGPT's spontaneous browsing. Records use `query_method="reverse"`,
+`platform="chatgpt"`, `model="reverse-chatgpt"`.
+
+**Detecting our citation.** The library's `decode_stream()` keeps only answer
+text, so the runner does its own POST and parses the **raw** SSE stream for
+`search_result_groups[].entries[].url` — the real source URLs (each tagged
+`?utm_source=chatgpt.com`). Each URL is reduced to a bare lowercase domain via
+`domain_from_url()` (scheme/`www.`/path/query/port stripped); our target is
+detected by exact / subdomain / parent match, the rest become `competitors`. If
+the forced call succeeds but the stream carries **no** `search_result_groups`,
+`notes` is `search_forced;no_search`.
 
 ## Measurement-first principle
 
@@ -109,13 +156,17 @@ Recorded in `platform`:
 | Platform       | How (later sprint)                                   |
 | -------------- | ---------------------------------------------------- |
 | `gemini`       | Auto — Gemini grounding API (free tier)              |
+| `chatgpt`      | Auto — anonymous backend-anon, search-forced (`query_method=reverse`); also recordable manually |
 | `perplexity`   | Auto — Perplexity Sonar API (cheap, returns sources) |
 | `google_aio`   | Manual — Google AI Overviews, observed by hand       |
-| `chatgpt`      | Manual — observed by hand                            |
 | `bing_copilot` | Manual — observed by hand                            |
 
 ## Hard rule: no UI scraping
 
-Do **NOT** scrape the ChatGPT or Perplexity web UIs — it violates their Terms of
-Service. Manual platforms are recorded by hand; automated platforms use their
-official APIs only.
+Do **NOT** scrape the ChatGPT or Perplexity rendered web UIs — it violates their
+Terms of Service. Manual platforms are recorded by hand. The `chatgpt` channel
+is **not** UI scraping: it calls the anonymous `backend-anon` JSON endpoint (no
+account, no login, no rendered-page scraping) via a reverse-engineered client,
+strictly for low-volume research measurement, run locally with polite pacing. It
+is labelled `query_method=reverse` to keep it distinct from official `api`
+channels.
