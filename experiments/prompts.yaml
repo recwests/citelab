@@ -1,0 +1,116 @@
+# CiteLab — Target Query Panel
+#
+# This file is the set of TARGETS for the CiteLab measurement experiment.
+# Each entry is a question a real person might ask an AI answer engine
+# (ChatGPT, Perplexity, Google AI Overviews, Gemini) on a topic where this
+# site would want to be CITED. These prompts are the experiment's inputs:
+# later sprints run each prompt against each platform (N>=3 times) and record
+# whether the site was cited (see runs/schema.json).
+#
+# Categories (exactly one per prompt):
+#   definitional  - "what is X" / conceptual explainer queries
+#   commercial    - buyer-intent / tool / service / comparison queries
+#   technical     - how-to / implementation / markup / structure queries
+#   measurement   - tracking, metrics, correlation, ROI queries
+#
+# NOTE: prompts are intentionally NOT self-referential (no "what is CiteLab").
+
+- id: p001
+  prompt: 'what is generative engine optimization'
+  category: definitional
+  notes: ''
+
+- id: p002
+  prompt: 'how is GEO different from traditional SEO'
+  category: definitional
+  notes: ''
+
+- id: p003
+  prompt: 'what are AI citation signals'
+  category: definitional
+  notes: ''
+
+- id: p004
+  prompt: 'why do AI search engines cite some sources and not others'
+  category: definitional
+  notes: ''
+
+- id: p005
+  prompt: 'what is the difference between brand mentions and backlinks for AI'
+  category: definitional
+  notes: ''
+
+- id: p006
+  prompt: 'best generative engine optimization tools 2026'
+  category: commercial
+  notes: ''
+
+- id: p007
+  prompt: 'GEO agency vs doing AI SEO in house'
+  category: commercial
+  notes: ''
+
+- id: p008
+  prompt: 'tools to track if ChatGPT cites my website'
+  category: commercial
+  notes: ''
+
+- id: p009
+  prompt: 'how much does generative engine optimization cost'
+  category: commercial
+  notes: ''
+
+- id: p010
+  prompt: 'Perplexity vs ChatGPT for getting my brand cited'
+  category: commercial
+  notes: ''
+
+- id: p011
+  prompt: 'how to structure content so AI engines cite it'
+  category: technical
+  notes: ''
+
+- id: p012
+  prompt: 'what schema markup helps with AI search citations'
+  category: technical
+  notes: ''
+
+- id: p013
+  prompt: 'how to optimize a page for Google AI Overviews'
+  category: technical
+  notes: ''
+
+- id: p014
+  prompt: 'does llms.txt help AI crawlers find my content'
+  category: technical
+  notes: ''
+
+- id: p015
+  prompt: 'how to make my content quotable by large language models'
+  category: technical
+  notes: ''
+
+- id: p016
+  prompt: 'how to measure AI search visibility'
+  category: measurement
+  notes: ''
+
+- id: p017
+  prompt: 'how to track citations in ChatGPT and Perplexity'
+  category: measurement
+  notes: ''
+
+- id: p018
+  prompt: 'what is the correlation between brand mentions and AI citations'
+  category: measurement
+  notes: ''
+
+- id: p019
+  prompt: 'what metrics show GEO is working'
+  category: measurement
+  notes: ''
+
+- id: p020
+  prompt: 'how to set a baseline for AI citation rate before optimizing'
+  category: measurement
+  notes: ''

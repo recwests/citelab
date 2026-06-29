@@ -1,6 +1,6 @@
 site:
-  name: AI Compute Compare
-  site: 'https://ai-compute-compare.pages.dev'
+  name: CiteLab
+  site: 'https://citelab.pages.dev'
   base: '/'
   trailingSlash: false
 
@@ -9,14 +9,14 @@ site:
 # Default SEO metadata
 metadata:
   title:
-    default: AI Compute Compare — GPU Cloud Price Comparison
-    template: '%s — AI Compute Compare'
-  description: 'Live price comparison and real benchmarks for GPU cloud providers — RunPod, Vast.ai, Lambda and more. Find the cheapest GPU cloud for AI training and inference.'
+    default: CiteLab — Generative Engine Optimization (GEO), Measured
+    template: '%s — CiteLab'
+  description: 'Practical GEO (Generative Engine Optimization) practices for optimizing your content for AI search engines like ChatGPT, Perplexity, and Google AI Overviews.'
   robots:
     index: true
     follow: true
   openGraph:
-    site_name: AI Compute Compare
+    site_name: CiteLab
     images:
       - url: '~/assets/images/default.png'
         width: 1200

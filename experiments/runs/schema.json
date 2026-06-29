@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CiteLab Measurement Run Record",
+  "description": "One observation of whether this site was cited by a single AI answer engine for a single prompt on a single run. Multiple records (N>=3 per prompt/platform) are collected per date file. See ../README.md for the recording protocol.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["date", "prompt_id", "prompt", "platform", "query_method", "cited", "run_index"],
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO 8601 date (YYYY-MM-DD) the run was performed."
+    },
+    "prompt_id": {
+      "type": "string",
+      "pattern": "^p[0-9]{3,}$",
+      "description": "References an id in ../prompts.yaml (e.g. p001)."
+    },
+    "prompt": {
+      "type": "string",
+      "description": "The exact prompt text submitted to the platform (copy of the prompts.yaml value at run time)."
+    },
+    "platform": {
+      "type": "string",
+      "enum": ["chatgpt", "perplexity", "gemini", "google_aio", "bing_copilot"],
+      "description": "Which AI answer engine was queried."
+    },
+    "query_method": {
+      "type": "string",
+      "enum": ["api", "manual"],
+      "description": "How the answer was obtained. 'api' = official API (gemini grounding, perplexity sonar); 'manual' = observed by hand in the UI. The same platform can give different results via different methods, so this must be recorded explicitly."
+    },
+    "model": {
+      "type": ["string", "null"],
+      "description": "Specific model/version behind the platform at run time (e.g. 'sonar', 'gpt-4o-2026-xx', 'gemini-2.0-flash'). Null/unknown when the platform hides it. Needed to separate model-update effects from content effects."
+    },
+    "cited": {
+      "type": "boolean",
+      "description": "Whether this site appeared in the answer in ANY form (link, brand mention, or quote). Use citation_type for the kind."
+    },
+    "citation_type": {
+      "type": ["string", "null"],
+      "enum": ["link", "mention", "quote", "none", null],
+      "description": "How the site was cited: 'link' = clickable source URL (strongest); 'quote' = our text quoted; 'mention' = brand named without link; 'none'/null = not cited. Always 'none'/null when cited=false."
+    },
+    "position": {
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "description": "Rank of this site among the cited sources (1 = first). Null when not cited or when the platform exposes no ordering."
+    },
+    "competitors": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^([a-z0-9]([a-z0-9-]*[a-z0-9])?\\.)+[a-z]{2,}$"
+      },
+      "description": "Other cited domains observed in the same answer, as bare lowercase domains (e.g. 'ahrefs.com'), no scheme/path."
+    },
+    "source_url": {
+      "type": ["string", "null"],
+      "description": "The exact URL of this site that was cited, or null if not cited."
+    },
+    "response_excerpt": {
+      "type": ["string", "null"],
+      "description": "Short verbatim excerpt of the answer around the citation/mention. AI answers are not replayable, so this preserves evidence — especially for manual runs where saving the page may breach ToS."
+    },
+    "run_index": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "1-based index of this repeat run for the same prompt+platform+date (N>=3 to account for non-determinism)."
+    },
+    "notes": {
+      "type": "string",
+      "description": "Free-form observations (region, anomalies, etc.)."
+    }
+  }
+}

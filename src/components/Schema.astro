@@ -1,0 +1,111 @@
+---
+type ArticleSchema = {
+  type: 'Article';
+  headline: string;
+  datePublished: string;
+  author: { name: string; url?: string; type?: 'Person' | 'Organization' };
+  image?: string;
+  speakable?: { cssSelector: string[] };
+};
+type FAQPageSchema = { type: 'FAQPage'; questions: { question: string; answer: string }[] };
+type BreadcrumbListSchema = { type: 'BreadcrumbList'; items: { name: string; href: string }[] };
+type WebSiteSchema = { type: 'WebSite'; name: string; url: string };
+type OrganizationSchema = {
+  type: 'Organization';
+  name: string;
+  url?: string;
+  logo?: string;
+  sameAs?: string[];
+  contactPoint?: { email: string };
+};
+type LearningResourceSchema = { type: 'LearningResource'; headline: string; description: string; provider: string };
+type ItemListSchema = { type: 'ItemList'; items: { name: string; url: string }[] };
+
+type Props =
+  | ArticleSchema
+  | FAQPageSchema
+  | BreadcrumbListSchema
+  | WebSiteSchema
+  | OrganizationSchema
+  | LearningResourceSchema
+  | ItemListSchema;
+
+function buildSchema(schema: Props) {
+  const base = { '@context': 'https://schema.org' };
+  switch (schema.type) {
+    case 'Article': {
+      return {
+        ...base,
+        '@type': 'Article',
+        headline: schema.headline,
+        datePublished: schema.datePublished,
+        author: {
+          '@type': schema.author.type ?? 'Organization',
+          name: schema.author.name,
+          ...(schema.author.url ? { url: schema.author.url } : {}),
+        },
+        ...(schema.image ? { image: schema.image } : {}),
+        ...(schema.speakable
+          ? { speakable: { '@type': 'SpeakableSpecification', cssSelector: schema.speakable.cssSelector } }
+          : {}),
+      };
+    }
+    case 'FAQPage':
+      return {
+        ...base,
+        '@type': 'FAQPage',
+        mainEntity: schema.questions.map((q) => ({
+          '@type': 'Question',
+          name: q.question,
+          acceptedAnswer: { '@type': 'Answer', text: q.answer },
+        })),
+      };
+    case 'BreadcrumbList':
+      return {
+        ...base,
+        '@type': 'BreadcrumbList',
+        itemListElement: schema.items.map((item, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: item.name,
+          item: item.href,
+        })),
+      };
+    case 'WebSite':
+      return { ...base, '@type': 'WebSite', name: schema.name, url: schema.url };
+    case 'Organization':
+      return {
+        ...base,
+        '@type': 'Organization',
+        name: schema.name,
+        ...(schema.url ? { url: schema.url } : {}),
+        ...(schema.logo ? { logo: schema.logo } : {}),
+        ...(schema.sameAs ? { sameAs: schema.sameAs } : {}),
+        ...(schema.contactPoint ? { contactPoint: { '@type': 'ContactPoint', email: schema.contactPoint.email } } : {}),
+      };
+    case 'LearningResource':
+      return {
+        ...base,
+        '@type': 'LearningResource',
+        headline: schema.headline,
+        description: schema.description,
+        provider: { '@type': 'Organization', name: schema.provider },
+      };
+    case 'ItemList':
+      return {
+        ...base,
+        '@type': 'ItemList',
+        itemListElement: schema.items.map((item, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: item.name,
+          url: item.url,
+        })),
+      };
+    default:
+      return base;
+  }
+}
+---
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(buildSchema(Astro.props as Props))} />

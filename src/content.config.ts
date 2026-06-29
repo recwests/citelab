@@ -66,6 +66,25 @@ const postCollection = defineCollection({
   }),
 });
 
+const geoPractices = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: 'src/content/geo-practices' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().max(200),
+    category: z.enum(['basics', 'content', 'technical', 'measurement']),
+    tags: z.array(z.string()),
+    difficulty: z.enum(['beginner', 'intermediate', 'advanced']),
+    published: z.coerce.date(),
+    updated: z.coerce.date(),
+    locale: z.enum(['en', 'ru']).default('en'),
+    canonicalUrl: z.string().url().optional(),
+    isStale: z.boolean().default(false),
+    sources: z.array(z.string()).optional(),
+    related: z.array(z.string()).optional(),
+  }),
+});
+
 export const collections = {
   post: postCollection,
+  geoPractices: geoPractices,
 };

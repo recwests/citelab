@@ -1,0 +1,86 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Headline from '~/components/ui/Headline.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Schema from '~/components/Schema.astro';
+import { getCollection } from 'astro:content';
+import { SITE } from 'astrowind:config';
+
+export const prerender = true;
+
+const allPractices = await getCollection('geoPractices');
+
+const categoryLabels: Record<string, string> = {
+  basics: 'Basics',
+  content: 'Content Strategy',
+  technical: 'Technical',
+  measurement: 'Measurement & Analytics',
+};
+
+const difficultyColors: Record<string, string> = {
+  beginner: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+  intermediate: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+  advanced: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+};
+
+function getSlug(id: string): string {
+  return id.replace(/^.*[/\\]/, '').replace(/\.[^.]+$/, '');
+}
+
+const grouped = allPractices.reduce<Record<string, typeof allPractices>>((acc, entry) => {
+  const cat = entry.data.category;
+  if (!acc[cat]) acc[cat] = [];
+  acc[cat].push(entry);
+  return acc;
+}, {});
+---
+
+<Layout metadata={{ title: 'GEO Practices' }}>
+  <WidgetWrapper>
+    <Headline
+      title="GEO Practices Guide"
+      subtitle="A collection of actionable practices for Generative Engine Optimization"
+      tagline="Learn"
+    />
+
+    <Schema
+      type="ItemList"
+      items={allPractices.map((entry) => ({
+        name: entry.data.title,
+        url: new URL('/learn/' + getSlug(entry.id), SITE.site).href,
+      }))}
+    />
+
+    {
+      Object.entries(grouped).map(([category, entries]) => (
+        <div class="mb-12">
+          <h3 class="text-2xl font-bold mb-6 capitalize">{categoryLabels[category] || category}</h3>
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {entries.map((entry) => {
+              const slug = getSlug(entry.id);
+              return (
+                <a
+                  href={`/learn/${slug}`}
+                  class="block p-6 rounded-lg border border-slate-200 dark:border-slate-700 hover:shadow-md hover:border-slate-300 dark:hover:border-slate-600 transition-all"
+                >
+                  <h4 class="text-lg font-semibold mb-2">{entry.data.title}</h4>
+                  <p class="text-sm text-muted mb-4 line-clamp-3">{entry.data.description}</p>
+                  <div class="flex flex-wrap gap-2 items-center">
+                    <span class={`text-xs px-2 py-0.5 rounded font-medium ${difficultyColors[entry.data.difficulty]}`}>
+                      {entry.data.difficulty}
+                    </span>
+                    {entry.data.tags.slice(0, 3).map((tag) => (
+                      <span class="text-xs px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      ))
+    }
+  </WidgetWrapper>
+</Layout>

@@ -1,2 +1,22 @@
+# AI crawlers — explicitly allowed
+User-agent: GPTBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+# All other crawlers — allowed
 User-agent: *
+Allow: /
 Disallow:
+
+Sitemap: https://citelab.pages.dev/sitemap-index.xml

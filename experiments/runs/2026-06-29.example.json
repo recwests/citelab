@@ -1,0 +1,18 @@
+[
+  {
+    "date": "2026-06-29",
+    "prompt_id": "p001",
+    "prompt": "what is generative engine optimization",
+    "platform": "perplexity",
+    "query_method": "api",
+    "model": "sonar",
+    "cited": false,
+    "citation_type": "none",
+    "position": null,
+    "competitors": ["ahrefs.com", "seo.com", "seopress.com"],
+    "source_url": null,
+    "response_excerpt": null,
+    "run_index": 1,
+    "notes": "EXAMPLE — not real data. Demonstrates the run-record shape; no measurement has been performed yet."
+  }
+]
