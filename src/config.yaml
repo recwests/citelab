@@ -1,6 +1,6 @@
 site:
   name: CiteLab
-  site: 'https://citelab.pages.dev'
+  site: 'https://citelab-eks.pages.dev'
   base: '/'
   trailingSlash: false
 
